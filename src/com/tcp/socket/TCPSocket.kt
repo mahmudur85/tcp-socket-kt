@@ -45,57 +45,6 @@ class TCPSocket(private val port: Int, private val listener: Listener): Coroutin
         }
     }
 
-    /*fun startAcceptThread() {
-        acceptThread = Thread(AcceptRunnable(this.listener), "accept-thread")
-        acceptThread?.priority = Thread.MAX_PRIORITY - 1
-        acceptThread?.start()
-    }
-
-    fun stopAcceptThread() {
-        if (acceptThread?.isAlive == true) {
-            acceptThread?.interrupt()
-        }
-    }
-
-    private inner class AcceptRunnable(private val listener: Listener) : Runnable, CoroutineScope {
-        private val log: Logger = Logger.getLogger(AcceptRunnable::class.simpleName)
-
-        private var mJob: Job = Job()
-        override val coroutineContext: CoroutineContext
-            get() = mJob + Dispatchers.IO
-
-        override fun run() {
-            try {
-                while (!Thread.interrupted()) {
-                    log.info("Waiting for a new connection...")
-                    val sock: Socket = serverSocket.accept()
-                    if(doAccept) {
-                        log.info("Received a connection from ${sock.remoteSocketAddress}")
-                        this.startReadThread(sock, this.listener)
-                    }else{
-                        sock.close()
-                        log.info("Rejecting a new connection from ${sock.remoteSocketAddress}")
-                    }
-                }
-            } catch (e: IOException) {
-                log.log(Level.WARNING, e.toString(), e)
-                this.stopReadThread()
-            }
-        }
-
-        private fun startReadThread(sock: Socket, listener: Listener) {
-            readThread = Thread(ReadRunnable(sock, listener), "accept-thread")
-            readThread?.priority = Thread.MAX_PRIORITY
-            readThread?.start()
-        }
-
-        private fun stopReadThread() {
-            if (readThread?.isAlive == true) {
-                readThread?.interrupt()
-            }
-        }
-    }*/
-
     private fun startReadThread(sock: Socket, listener: Listener) {
         readThread = Thread(ReadRunnable(sock, listener), "accept-thread")
         readThread?.priority = Thread.MAX_PRIORITY
