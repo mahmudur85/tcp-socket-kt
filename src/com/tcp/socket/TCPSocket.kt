@@ -34,6 +34,7 @@ class TCPSocket(private val port: Int, private val listener: Listener): Coroutin
                 if(doAccept) {
                     log.info("Received a connection from ${sock.remoteSocketAddress}")
                     this.startReadThread(sock, this.listener)
+                    this.listener.connected(sock.inetAddress?.hostName.toString())
                 }else{
                     sock.close()
                     log.info("Rejecting a new connection from ${sock.remoteSocketAddress}")
@@ -73,11 +74,13 @@ class TCPSocket(private val port: Int, private val listener: Listener): Coroutin
                         log.info(
                         "Received `${data.length}` bytes from ${socket.inetAddress}:  $data"
                         )
+                        this.listener.received(data, socket.inetAddress?.hostName.toString())
                     } else {
-                        socket.close()
                         log.info(
                         "Connection closed by remote ${socket.inetAddress}"
                         )
+                        this.listener.disConnected(socket.inetAddress?.hostName.toString())
+                        socket.close()
                         break
                     }
                 }
@@ -91,6 +94,6 @@ class TCPSocket(private val port: Int, private val listener: Listener): Coroutin
     interface Listener {
         fun connected(remoteAddress: String)
         fun disConnected(remoteAddress: String)
-        fun received(data: ByteArray, remoteAddress: String)
+        fun received(data: String, remoteAddress: String)
     }
 }
